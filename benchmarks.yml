@@ -1,0 +1,42 @@
+imports:
+  - https://raw.githubusercontent.com/dotnet/crank/master/src/Microsoft.Crank.Jobs.Wrk/wrk.yml
+
+scenarios:
+  get:
+    application:
+      job: server
+    load:
+      job: wrk
+      variables:
+        serverPort: 5000
+        path: /
+  post:
+    application:
+      job: server
+    load:
+      job: wrk
+      variables:
+        serverPort: 5000
+        path: /
+        script: https://raw.githubusercontent.com/aspnet/Benchmarks/master/scripts/mvcjsoninput.lua
+
+jobs:
+  server:
+    source:
+      localFolder: src/Benchmarks
+      project: Benchmarks.csproj
+    readyStateText: "Application Started."
+
+profiles:
+  aspnet-citrine-win:
+    variables:
+      serverPort: 5000
+      serverAddress: 10.0.0.104
+      cores: 28
+    jobs: 
+      application:
+        endpoints: 
+          - http://asp-citrine-win:5001
+      load:
+        endpoints:
+          - http://asp-citrine-load:5001
